@@ -1,4 +1,4 @@
-This is a Python shell around the LFMF ground wave propagation model C++ code
+This is a Python wrapper around the LFMF ground wave propagation model C++ code
 that can be found in the attachment of ITU-R Recommendation P.368-10 (08/2022).
 
 This code requires a prebuilt dynamic-link library LFMF.dll (Windows) or 

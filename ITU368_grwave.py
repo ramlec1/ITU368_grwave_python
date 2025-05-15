@@ -1,5 +1,6 @@
 ''' ITU 368 Groundwave Propagation
-This script computes the groundwave propagation using the ITU 368 model using python.
+This script computes the groundwave propagation using the C++ ITU 368 model in 
+a python wrapper.
 Marcel van den Broek, 2025'''
 
 
