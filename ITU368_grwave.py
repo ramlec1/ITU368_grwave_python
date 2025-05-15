@@ -91,15 +91,15 @@ def run_ITU368_grwave(h_tx__meter, h_rx__meter, f__mhz, P_tx__wat, N_s, d__km, e
                 print(f"Error code {status}: UNKNOWN ERROR")
         
 def main():
-    # Define the input parameters (check type with lfmf_lib.LFMF.argtypes)
-    h_tx__meter = 10.0      # TX height [m]: 0 ≤ h_tx__meter ≤ 50
-    h_rx__meter = 1.5       # RX height [m]: 0 ≤ h_rx__meter ≤ 50
-    f__mhz      = 15.0      # Frequency [MHz]: 0.01 ≤ f__mhz ≤ 30
-    P_tx__wat   = 1.0       # TX power [W]: 0 < P_tx__watt
+    # Define the input parameters
+    h_tx__meter = 50.       # TX height [m]: 0 ≤ h_tx__meter ≤ 50
+    h_rx__meter = 3.        # RX height [m]: 0 ≤ h_rx__meter ≤ 50
+    f__mhz      = 0.89      # Frequency [MHz]: 0.01 ≤ f__mhz ≤ 30
+    P_tx__wat   = 50e3      # TX power [W]: 0 < P_tx__watt
     N_s         = 250.      # Surface refractivity [N-units]: 250 ≤ N_s ≤ 400
-    d__km       = 1.0       # Distance [km]: d__km ≤ 10 000
-    epsilon     = 15        # Relative permittivity earth surface: 1 ≤ epsilon
-    sigma       = 0.01      # Conductivity earth surface [S/m]: 0 < sigma
+    d__km       = 10.        # Distance [km]: d__km ≤ 10 000
+    epsilon     = 4.         # Relative permittivity earth surface: 1 ≤ epsilon
+    sigma       = 2e-3      # Conductivity earth surface [S/m]: 0 < sigma
     pol         = 1         # Polarization: 0 = horizontal, 1 = vertical 
     
     # run the grwave function
@@ -111,6 +111,23 @@ def main():
     print(f"P_rx__dbm: {result[2]}")
     print(f"Method: {result[3]}")
 
+    # Create a range of distances [km]
+    distances = np.arange(10, 401, 10) 
+
+    # Compute the transmission loss for each distance using the ITU368 grwave function
+    results = []
+    for d in distances:
+        result = run_ITU368_grwave(h_tx__meter, h_rx__meter, f__mhz, P_tx__wat, N_s, d, epsilon, sigma, pol)
+        results.append(result[0])
+
+    # Plot the results
+    fig, ax = plt.subplots()
+    ax.plot(distances, results)
+    ax.set_xlabel('Distance [km]')
+    ax.set_ylabel('Basic transmission loss [dB]')
+    ax.set_title('ITU 368 Groundwave Propagation')
+    ax.grid(True)
+    plt.show()
 
 if __name__ == "__main__": 
     main()
