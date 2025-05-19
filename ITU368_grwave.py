@@ -122,13 +122,13 @@ class ITU368Grwave:
         
 def main():
     # Define the input parameters
-    h_tx__meter = 2.       # TX height [m]: 0 ≤ h_tx__meter ≤ 50
+    h_tx__meter = 2.        # TX height [m]: 0 ≤ h_tx__meter ≤ 50
     h_rx__meter = 2.        # RX height [m]: 0 ≤ h_rx__meter ≤ 50
     f__mhz      = 0.01      # Frequency [MHz]: 0.01 ≤ f__mhz ≤ 30
-    P_tx__watt   = 50e3      # TX power [W]: 0 < P_tx__watt
+    P_tx__watt  = 1         # TX power [W]: 0 < P_tx__watt
     N_s         = 250.      # Surface refractivity [N-units]: 250 ≤ N_s ≤ 400
-    d__km       = 100.        # Distance [km]: d__km ≤ 10 000
-    epsilon     = 20.         # Relative permittivity earth surface: 1 ≤ epsilon
+    d__km       = 100.      # Distance [km]: d__km ≤ 10 000
+    epsilon     = 20.       # Relative permittivity earth surface: 1 ≤ epsilon
     sigma       = 0.01      # Conductivity earth surface [S/m]: 0 < sigma
     pol         = 1         # Polarization: 0 = horizontal, 1 = vertical 
     
@@ -145,13 +145,14 @@ def main():
     print(f"Method: {result[3]}")
 
     # Compute the transmission loss for a range of distances using parallel processing
-    distances = np.geomspace(0.01, 1001, 30000) # [km]
+    distances = np.geomspace(0.005, 10000, 30000) # [km]
     results = grwave.evaluate_distances(h_tx__meter, h_rx__meter, f__mhz, P_tx__watt, N_s, distances, epsilon, sigma, pol, result_index=0, max_workers=4)
-
 
     # Plot the results
     fig, ax = plt.subplots()
     ax.plot(distances, results)
+
+    ax.set_xscale('log')
     ax.set_xlabel('Distance [km]')
     ax.set_ylabel('Basic transmission loss [dB]')
     ax.set_title('ITU 368 Groundwave Propagation')
