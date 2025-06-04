@@ -119,17 +119,17 @@ class ITU368Grwave:
             results = list(executor.map(compute_loss, distances))
         return results
     
-        
+
 def main():
     # Define the input parameters
     h_tx__meter = 2.        # TX height [m]: 0 ≤ h_tx__meter ≤ 50
     h_rx__meter = 2.        # RX height [m]: 0 ≤ h_rx__meter ≤ 50
     f__mhz      = 0.01      # Frequency [MHz]: 0.01 ≤ f__mhz ≤ 30
-    P_tx__watt  = 1         # TX power [W]: 0 < P_tx__watt
-    N_s         = 250.      # Surface refractivity [N-units]: 250 ≤ N_s ≤ 400
+    P_tx__watt  = 1e3       # TX power [W]: 0 < P_tx__watt
+    N_s         = 350.      # Surface refractivity [N-units]: 250 ≤ N_s ≤ 400
     d__km       = 100.      # Distance [km]: d__km ≤ 10 000
-    epsilon     = 20.       # Relative permittivity earth surface: 1 ≤ epsilon
-    sigma       = 0.01      # Conductivity earth surface [S/m]: 0 < sigma
+    epsilon     = 80.       # Relative permittivity earth surface: 1 ≤ epsilon
+    sigma       = 1.        # Conductivity earth surface [S/m]: 0 < sigma
     pol         = 1         # Polarization: 0 = horizontal, 1 = vertical 
     
     # create an instance of the ITU368Grwave class
@@ -144,19 +144,20 @@ def main():
     print(f"P_rx__dbm: {result[2]}")
     print(f"Method: {result[3]}")
 
+    # Verify the implementation against the figures in report ITU-R P.368-10 Figure 1
     # Compute the transmission loss for a range of distances using parallel processing
-    distances = np.geomspace(0.005, 10000, 30000) # [km]
-    results = grwave.evaluate_distances(h_tx__meter, h_rx__meter, f__mhz, P_tx__watt, N_s, distances, epsilon, sigma, pol, result_index=0, max_workers=4)
-
-    # Plot the results
-    fig, ax = plt.subplots()
-    ax.plot(distances, results)
-
-    ax.set_xscale('log')
-    ax.set_xlabel('Distance [km]')
-    ax.set_ylabel('Basic transmission loss [dB]')
-    ax.set_title('ITU 368 Groundwave Propagation')
-    ax.grid(True)
+    distances = np.geomspace(1, 10000, 300) # [km]
+    frequencies = np.array([0.01, 0.015, 0.02, 0.03, 0.04, 0.05, 0.075, 0.1, 0.15, 0.2, 0.3, 0.4, 0.5, 0.75, 1., 1.5, 2., 3., 4., 5., 7.5, 10., 15., 20., 30.]) # [MHz]
+    for f__mhz in frequencies:
+        results = grwave.evaluate_distances(h_tx__meter, h_rx__meter, f__mhz, P_tx__watt, N_s, distances, epsilon, sigma, pol, result_index=1)
+        plt.plot(distances, results, label=f'{f__mhz} MHz')
+    plt.grid()
+    plt.ylim(-30, 120)
+    plt.xscale('log')
+    plt.xlabel('Distance [km]')
+    plt.ylabel('Electric field strength [dBuV/m]')
+    plt.title('ITU 368 Groundwave Propagation - Verification against ITU-R P.368-10 Figure 1')
+    plt.legend()
     plt.show()
 
 
