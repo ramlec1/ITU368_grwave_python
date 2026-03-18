@@ -9,3 +9,4 @@ and building the project. This will generate "/LFMF Source/bin/LFMF.dll".
 Otherwise create build the .dll/.so using terminal commands of your compiler or 
 using CMake.
 
+![alt text](./grwave_plot.png)
