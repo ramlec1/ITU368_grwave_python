@@ -144,20 +144,24 @@ def main():
     print(f"P_rx__dbm: {result[2]}")
     print(f"Method: {result[3]}")
 
+    fig, ax = plt.subplots(figsize=(14,7))
+
     # Verify the implementation against the figures in report ITU-R P.368-10 Figure 1
     # Compute the transmission loss for a range of distances using parallel processing
     distances = np.geomspace(1, 10000, 300) # [km]
     frequencies = np.array([0.01, 0.015, 0.02, 0.03, 0.04, 0.05, 0.075, 0.1, 0.15, 0.2, 0.3, 0.4, 0.5, 0.75, 1., 1.5, 2., 3., 4., 5., 7.5, 10., 15., 20., 30.]) # [MHz]
     for f__mhz in frequencies:
         results = grwave.evaluate_distances(h_tx__meter, h_rx__meter, f__mhz, P_tx__watt, N_s, distances, epsilon, sigma, pol, result_index=1)
-        plt.plot(distances, results, label=f'{f__mhz} MHz')
-    plt.grid()
-    plt.ylim(-30, 120)
-    plt.xscale('log')
-    plt.xlabel('Distance [km]')
-    plt.ylabel('Electric field strength [dBuV/m]')
-    plt.title('ITU 368 Groundwave Propagation - Verification against ITU-R P.368-10 Figure 1')
-    plt.legend()
+        ax.plot(distances, results, label=f'{f__mhz} MHz')
+    ax.grid()
+    ax.set_xlim(9e-1, 5e4)
+    ax.set_ylim(-30, 120)
+    ax.set_xscale('log')
+    ax.set_xlabel('Distance [km]')
+    ax.set_ylabel('Electric field strength [dBuV/m]')
+    ax.set_title('ITU 368 Groundwave Propagation - for verification against ITU-R P.368-10 Figure 1')
+    ax.legend()
+    fig.savefig("grwave_plot.png")
     plt.show()
 
 
